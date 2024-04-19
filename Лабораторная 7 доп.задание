@@ -1,0 +1,99 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+
+abstract class FootballTeam
+{
+    public string TeamName { get; }
+    public int Points { get; }
+
+    public abstract string GetGender();
+
+    public FootballTeam(string teamName, int points)
+    {
+        TeamName = teamName;
+        Points = points;
+    }
+}
+
+class WomenFootballTeam : FootballTeam
+{
+    public WomenFootballTeam(string teamName, int points) : base(teamName, points)
+    {
+    }
+
+    public override string GetGender()
+    {
+        return "женская";
+    }
+}
+
+class MenFootballTeam : FootballTeam
+{
+    public MenFootballTeam(string teamName, int points) : base(teamName, points)
+    {
+    }
+
+    public override string GetGender()
+    {
+        return "мужская";
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        List<FootballTeam> allTeams = new List<FootballTeam>();
+        allTeams.Add(new WomenFootballTeam("ЦСКА", 13));
+        allTeams.Add(new MenFootballTeam("Динамо", 12));
+        allTeams.Add(new MenFootballTeam("Спартак", 10));
+        allTeams.Add(new WomenFootballTeam("Зенит", 11));
+
+        // Сортировка списка команд по количеству очков с использованием быстрой сортировки
+        QuickSort(allTeams, 0, allTeams.Count - 1);
+
+        Console.WriteLine("Рейтинг команд:");
+        int rank = 1;
+        foreach (var team in allTeams)
+        {
+            Console.WriteLine($"{rank}. {team.TeamName} {team.GetGender()} команда {team.Points} очков");
+            rank++;
+        }
+    }
+
+    static void QuickSort(List<FootballTeam> teams, int low, int high)
+    {
+        if (low < high)
+        {
+            int pivotIndex = Partition(teams, low, high);
+            QuickSort(teams, low, pivotIndex - 1);
+            QuickSort(teams, pivotIndex + 1, high);
+        }
+    }
+
+    static int Partition(List<FootballTeam> teams, int low, int high)
+    {
+        FootballTeam pivot = teams[high];
+        int i = low - 1;
+
+        for (int j = low; j < high; j++)
+        {
+            if (teams[j].Points >= pivot.Points)
+            {
+                i++;
+                Swap(teams, i, j);
+            }
+        }
+
+        Swap(teams, i + 1, high);
+        return i + 1;
+    }
+
+    static void Swap(List<FootballTeam> teams, int i, int j)
+    {
+        FootballTeam temp = teams[i];
+        teams[i] = teams[j];
+        teams[j] = temp;
+    }
+}
